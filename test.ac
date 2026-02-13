@@ -1,4 +1,7 @@
-load r0 50
+load 1 r0
+load 100 r1
+
+sub r0 r1 r0
 print r0
 
 halt
