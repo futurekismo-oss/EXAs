@@ -7,7 +7,7 @@ Syntax highlighting for EXA assembly language (.ac files).
 - Syntax highlighting for all EXA instructions
 - Comment support with <<
 - Label highlighting
-- Register and number highlighting
+- Register and number highlighting  
 - String support
 
 ## Instructions Supported
