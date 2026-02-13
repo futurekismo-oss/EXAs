@@ -1,0 +1,4 @@
+load r0 50
+print r0
+
+halt
