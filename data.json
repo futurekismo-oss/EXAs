@@ -1,0 +1,28 @@
+{
+    "opcodes": {
+        "load": 1,
+
+        "add": 2,
+        "sub": 3,
+        "muli": 4,
+        "div": 5,
+
+        "addi": 6,
+        "subi": 7,
+        "mulii": 8,
+        "divi": 9,
+
+        "copy": 11,
+        "halt": 255,
+        "print": 10,
+        "jump": 404,
+        "jumpz": 406
+    },
+    "terminal_colors": {
+        "green": "\u001b[92m",
+        "blue": "\u001b[94m",
+        "yellow": "\u001b[93m",
+        "red": "\u001b[91m",
+        "reset": "\u001b[0m"
+    }
+}

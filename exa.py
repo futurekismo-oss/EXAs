@@ -4,31 +4,29 @@ import json
 
 # Hashmaps, located in json files
 
-with open("json's/OPCODES.json", "r") as opcodes:
-    OPCODES = json.load(opcodes)
-    
-with open("json's/REGISTER.json", "r") as registers:
-    REGISTERS = json.load(registers)
-    
-with open("json's/TERMINAL_COLORS.json", "r") as colors:
-    TERMINAL_COLORS = json.load(colors)
+with open("data.json", "r") as data:
+    data = json.load(data)
 
+    OPCODES = data["opcodes"]
+    COLORS = data["terminal_colors"]
+    # REG = data["registers"]
 
+REG = {}
+register_count = 0
 
 
 def print_execution_time(exec_time):
     exec_time_ms = exec_time * 1000
     g, b, y, r = (
-        TERMINAL_COLORS["green"],
-        TERMINAL_COLORS["blue"],
-        TERMINAL_COLORS["yellow"],
-        TERMINAL_COLORS["reset"],
+        COLORS["green"],
+        COLORS["blue"],
+        COLORS["yellow"],
+        COLORS["reset"],
     )
     print(f"{g}Execution state: {b}finished{r}, {y}{exec_time_ms:.2f}ms{r}")
 
 
 bytecode = []
-register = [0, 0]
 
 start_time = time.time()
 
@@ -41,70 +39,197 @@ filename = sys.argv[1]
 if not filename.endswith(".ac"):
     print("Error: File must be a .ac file")
     sys.exit(1)
+    
+LABELS = {}
+lines = []
+instruction_index = 0
+
 
 with open(filename, "r") as f:
-    for line in f:
-        # Remove comments
-        if "<<" in line:
-            line = line.split("<<")[0]
+    for raw_line in f:
 
-        parts = line.strip().split()
+        if "<<" in raw_line:
+            raw_line = raw_line.split("<<")[0]
 
-        if not parts:
+        line = raw_line.strip()
+        if not line:
             continue
 
+        # Label (do NOT count as instruction)
+        if line.endswith(":"):
+            label_name = line[:-1].lower()
+            LABELS[label_name] = instruction_index
+            continue
+
+        # Real instruction
+        lines.append(line)
+        instruction_index += 1
+        
+    for line in lines:
         instruction_bytes = []
+        if '"' in line:
+            # split the string
+            before_quote = line.split('"')[0].strip()
+            string_content = line.split('"')[1]
 
-        instruction = parts[0].lower()
-        instruction_bytes.append(OPCODES[instruction])
+            # Get instructions
+            parts = before_quote.split()
+            instruction = parts[0].lower()
+            instruction_bytes.append(OPCODES[instruction])
 
-        for i in range(1, len(parts)):
-            arg = parts[i].lower()
+            # Add any args before the string
+            for i in range(1, len(parts)):
+                arg = parts[i].lower()
 
-            if arg in REGISTERS:
-                instruction_bytes.append(REGISTERS[arg])
-            else:
-                instruction_bytes.append(int(arg))
+                # Is it a label reference?
+                if arg in LABELS:
+                    instruction_bytes.append(LABELS[arg])
+
+                # Is it a register?
+                elif arg.isalpha():
+                    # If this instruction expects a label but didn't find one,
+                    # treat as register ONLY if it's not used in a jump.
+                    if instruction in ["jump", "jumpz"] and arg not in REG:
+                        print(f"Error: Undefined label '{arg}'")
+                        sys.exit(1)
+
+                    if arg not in REG:
+                        REG[arg] = register_count
+                        register_count += 1
+                    instruction_bytes.append(REG[arg])
+                else:
+                    instruction_bytes.append(int(arg))
+
+            # Add the string itself
+            instruction_bytes.append(string_content)
+
+        else:
+            # Normal instruction (no string)
+            parts = line.split()
+            instruction = parts[0].lower()
+            instruction_bytes.append(OPCODES[instruction])
+
+            for i in range(1, len(parts)):
+                arg = parts[i].lower()
+
+                # Is it a label reference?
+                if arg in LABELS:
+                    instruction_bytes.append(LABELS[arg])
+
+                # Is it a register?
+                                
+                elif arg.isalpha():
+                    # If this instruction expects a label but didn't find one,
+                    # treat as register ONLY if it's not used in a jump.
+                    if instruction in ["jump", "jumpz"] and arg not in REG:
+                        print(f"Error: Undefined label '{arg}'")
+                        sys.exit(1)
+
+                    if arg not in REG:
+                        REG[arg] = register_count
+                        register_count += 1
+                    instruction_bytes.append(REG[arg])
+                else:  # Then its a number
+                    instruction_bytes.append(int(arg))
 
         bytecode.append(instruction_bytes)
 
+
 with open("test.ach", "w") as f:
     f.write(str(bytecode))
+
+# After assembler builds REG dict:
+register = [0] * register_count  # Create enough registers
 
 pc = 0  # program counter
 
 while pc < len(bytecode):
 
-    if arg in REGISTERS:
-        instruction_bytes.append(REGISTERS[arg])
-
     instruction = bytecode[pc]
     opcode = instruction[0]
 
-    if opcode == 1:
-        value = instruction[1]
-        reg = instruction[2]
-        register[reg] = value
-    if opcode == 2:
-        reg_src1 = instruction[1]
-        reg_src2 = instruction[2]
-        reg_dest = instruction[3]
+    match opcode:
+        case 1:
+            value = instruction[1]
+            reg = instruction[2]
+            register[reg] = value
+            
+            
+        case 2:  # add
+            reg_src1 = instruction[1]
+            reg_src2 = instruction[2]
+            reg_dest = instruction[3]
+            register[reg_dest] = register[reg_src1] + register[reg_src2]
+        case 3:  # sub
+            reg_src1 = instruction[1]
+            reg_src2 = instruction[2]
+            reg_dest = instruction[3]
+            register[reg_dest] = register[reg_src1] - register[reg_src2]
+        case 4:  # muli
+            reg_src1 = instruction[1]
+            reg_src2 = instruction[2]
+            reg_dest = instruction[3]
+            register[reg_dest] = register[reg_src1] * register[reg_src2]
+        case 5:  # div
+            reg_src1 = instruction[1]
+            reg_src2 = instruction[2]
+            reg_dest = instruction[3]
+            register[reg_dest] = register[reg_src1] // register[reg_src2]
+            
+        case 6: #addi
+            reg_src = instruction[1]
+            value = instruction[2]
+            reg_dest = instruction[3]
+            register[reg_dest] = register[reg_src] + value
+        case 7: #subi
+            reg_src = instruction[1]
+            value = instruction[2]
+            reg_dest = instruction[3]
+            register[reg_dest] = register[reg_src] - value
+        case 8: #mulii
+            reg_src = instruction[1]
+            value = instruction[2]
+            reg_dest = instruction[3]
+            register[reg_dest] = register[reg_src] * value
+        case 9: #divi
+            reg_src = instruction[1]
+            value = instruction[2]
+            reg_dest = instruction[3]
+            register[reg_dest] = register[reg_src] // value
+        
+        case 11: #copy
+            reg_src = instruction[1]
+            reg_dest = instruction[2]
 
-        register[reg_dest] = register[reg_src1] + register[reg_src2]
+            register[reg_dest] = register[reg_src]
+        
+        case 10:  # print
+            reg = instruction[1]
 
-    elif opcode == 3:
-        reg_src1 = instruction[1]
-        reg_src2 = instruction[2]
-        reg_dest = instruction[3]
-
-        register[reg_dest] = register[reg_src1] - register[reg_src2]
-
-    elif opcode == 10:
-        reg = instruction[1]
-        print(register[reg])
-    elif opcode == 255:
-        end_time = time.time()
-        print_execution_time(end_time - start_time)
-        break
+            if isinstance(reg, str):
+                print(reg)
+            else:
+                print(register[reg])
+                
+                
+        case 404:  # jump
+            pc = instruction[1]
+            continue
+        case 406:  # jumpz
+            reg = register[instruction[2]]
+            mode = instruction[3]
+            
+            if mode == 1:
+                if reg == 0:
+                    pc = instruction[1]
+                    continue
+            else:
+                if reg > 0:
+                    pc = instruction[1]
+                    continue
+        case 255:
+            end_time = time.time()
+            print_execution_time(end_time - start_time)
+            break
 
     pc += 1
