@@ -135,9 +135,6 @@ with open(filename, "r") as f:
         bytecode.append(instruction_bytes)
 
 
-with open("test.ach", "w") as f:
-    f.write(str(bytecode))
-
 # After assembler builds REG dict:
 register = [0] * register_count  # Create enough registers
 

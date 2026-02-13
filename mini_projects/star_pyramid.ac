@@ -1,0 +1,21 @@
+load 0 row
+load 0 col
+load 0 max_row
+load 5 max_row   << number of rows
+
+loop_row:
+jumpz end max_row 1   << stop after max_row
+load 0 col            << reset col
+
+loop_col:
+jumpz next_row col 1  << end column loop when col > row
+print "*"             << print one star
+addi col 1 col
+jump loop_col
+
+next_row:
+addi row 1 row
+jump loop_row
+
+end:
+halt

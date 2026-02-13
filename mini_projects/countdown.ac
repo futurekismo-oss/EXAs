@@ -1,0 +1,11 @@
+load 10 count
+
+loop:
+jumpz end count 1
+print count
+subi count 1 count
+jump loop
+
+end:
+print "Blast off!"
+halt
