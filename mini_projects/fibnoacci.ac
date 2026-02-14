@@ -2,7 +2,6 @@ load 0 a        << first Fibonacci number
 load 1 b        << second Fibonacci number
 load 10 count   << how many numbers to print
 load 0 temp     << temporary register for calculation
-
 loop:
 jumpz end count 1   << exit if count == 0
 print a
@@ -14,4 +13,3 @@ jump loop
 
 end:
 halt
-kill
