@@ -7,6 +7,7 @@ my programming language comes with compiler and assembler
 The file extension is ***`.ac`***
 
 
+_______________________________
 
 # **Documentation:** 
 
@@ -41,6 +42,7 @@ Here a list of them and what they do:
 > **Usage**: `print <string / register>`
 
 
+_______________________________
 
 ### ***ARITHMETIC FUNCTIONS***
 
@@ -63,6 +65,7 @@ Here a list of them and what they do:
 >> **Example**: `add x 1 y` **<< x + 1 = y**
 
 
+_______________________________
 
 ### ***CONDITIONALS***
 
@@ -74,9 +77,10 @@ Here a list of them and what they do:
 
 > **Usage**: `jump <location>`
 >> **Example**:
->>      `mark:`
->>      `jump mark`
-
+>> ```
+>> mark:
+>> jump mark
+>> ```
 
 - **jumpz**: has 2 modes, 
     1. **first mode (1)**, jump to a marked locaton if the given register is equal to zero
@@ -85,7 +89,7 @@ Here a list of them and what they do:
 > **Usage**: `jumpz <location> <register> <mode>`
 >> **Example**: `jump mark z 0` **<< jump to mark if z is equal to zero** 
 
-
+_______________________________
 
 ### ***MISCELLANEOUS***
 
@@ -119,5 +123,7 @@ and if you wanna see the bytecode of your program:
 
 
 
+_______________________________
+_______________________________
 
 ###### 2026, Futurekismo
