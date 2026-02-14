@@ -12,7 +12,7 @@ with open(os.path.join(BASE_DIR, "data.json"), "r") as data:
 
     OPCODES = data["opcodes"]
     COLORS = data["terminal_colors"]
-    # REG = data["registers"]
+    ARG = data["argument_n"]
 
 REG = {}
 register_count = 0
@@ -98,6 +98,12 @@ with open(filename, "r") as f:
             # Get instructions
             parts = before_quote.split()
             instruction = parts[0].lower()
+            
+            # unknown instruction
+            if instruction not in OPCODES:
+                error("unknown instruction", instruction_index)
+                sys.exit(1)
+            
             instruction_bytes.append(OPCODES[instruction])
 
             # Add any args before the string
@@ -130,6 +136,18 @@ with open(filename, "r") as f:
             # Normal instruction (no string)
             parts = line.split()
             instruction = parts[0].lower()
+            args = parts[1:]
+            
+            expected = ARG.get(instruction, None)
+            if expected is not None and len(args) != expected:
+                print(f"{r}Error: '{instruction}' expects {expected} arguments, got {len(args)}{reset}")
+                sys.exit(1)
+            
+            # unknown instruction
+            if instruction not in OPCODES:
+                error("unknown instruction", instruction_index)
+                sys.exit(1)
+            
             instruction_bytes.append(OPCODES[instruction])
 
             for i in range(1, len(parts)):
@@ -154,7 +172,6 @@ with open(filename, "r") as f:
                     instruction_bytes.append(REG[arg])
                 else:  # Then its a number
                     instruction_bytes.append(int(arg))
-
         bytecode.append(instruction_bytes)
         
 generate_bytcode()
@@ -237,10 +254,12 @@ while pc < len(bytecode):
         case 10:  # print
             reg = instruction[1]
 
-            if isinstance(reg, str):
-                print(reg)
-            else:
-                print(register[reg])
+            for item in instruction[1:]:
+                if isinstance(item, str):
+                    print(item, end=" ")
+                else:
+                    print(register[item], end=" ")
+            print()
                 
                 
         case 404:  # jump
