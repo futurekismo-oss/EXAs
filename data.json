@@ -13,10 +13,12 @@
         "divi": 9,
 
         "copy": 11,
-        "halt": 255,
         "print": 10,
         "jump": 404,
-        "jumpz": 406
+        "jumpz": 406,
+
+        "halt": 255,
+        "kill": 256
     },
     "terminal_colors": {
         "green": "\u001b[92m",

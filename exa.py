@@ -15,15 +15,20 @@ REG = {}
 register_count = 0
 
 
-def print_execution_time(exec_time):
+def print_execution_time(exec_time, mode):
     exec_time_ms = exec_time * 1000
-    g, b, y, r = (
+    r, g, b, y, f = (
+        COLORS["red"],
         COLORS["green"],
         COLORS["blue"],
         COLORS["yellow"],
         COLORS["reset"],
     )
-    print(f"{g}Execution state: {b}finished{r}, {y}{exec_time_ms:.2f}ms{r}")
+    
+    if mode == "halt":
+        print(f"{g}Execution state: {b}finished{f}, {y}{exec_time_ms:.2f}ms{f}")
+    elif mode == "kill":
+        print(f"{g}Execution state: {r}CANCELLED{f}, {y}{exec_time_ms:.2f}ms{f}")
 
 
 bytecode = []
@@ -226,7 +231,11 @@ while pc < len(bytecode):
                     continue
         case 255:
             end_time = time.time()
-            print_execution_time(end_time - start_time)
+            print_execution_time(end_time - start_time, "halt")
+            break
+        case 256:
+            end_time = time.time()
+            print_execution_time(end_time - start_time, "kill")
             break
 
     pc += 1

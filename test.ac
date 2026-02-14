@@ -1,0 +1,10 @@
+load 50 x
+load 70 y
+
+print x
+
+add x y y
+
+print y
+
+kill

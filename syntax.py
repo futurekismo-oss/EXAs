@@ -98,7 +98,7 @@ tmlanguage = {
         },
         "registers": {
             "name": "variable.parameter.exa",
-            "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+            "match": "(?!\\b(" + "|".join(opcodes) + ")\\b)\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
         },
         "numbers": {
             "name": "constant.numeric.exa",

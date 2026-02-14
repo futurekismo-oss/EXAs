@@ -12,7 +12,7 @@ Syntax highlighting for EXA assembly language (.ac files).
 
 ## Instructions Supported
 
-add, addi, copy, div, divi, halt, jump, jumpz, load, muli, mulii, print, sub, subi
+add, addi, copy, div, divi, halt, jump, jumpz, kill, load, muli, mulii, print, sub, subi
 
 ## Usage
 
