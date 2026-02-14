@@ -13,10 +13,12 @@
         "divi": 9,
 
         "copy": 11,
-        "halt": 255,
         "print": 10,
         "jump": 404,
-        "jumpz": 406
+        "jumpz": 406,
+
+        "halt": 255,
+        "kill": 256
     },
     "terminal_colors": {
         "green": "\u001b[92m",
@@ -24,5 +26,16 @@
         "yellow": "\u001b[93m",
         "red": "\u001b[91m",
         "reset": "\u001b[0m"
+    },
+    "argument_n": {
+        "load": 2,
+        "add": 3, "sub": 3, "muli": 3, "div": 3,
+        "addi": 3, "subi": 3, "mulii": 3, "divi": 3,
+        "copy": 2,
+        "print": 1,
+        "jump": 1,
+        "jumpz": 3,
+        "halt": 0,
+        "kill": 0
     }
 }

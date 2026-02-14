@@ -1,5 +1,6 @@
 {
   "name": "exa-assembly",
+  "publisher": "futurekismo",
   "displayName": "EXA Assembly",
   "description": "Syntax highlighting for EXA assembly language (.ac files)",
   "version": "0.0.1",

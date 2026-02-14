@@ -1,40 +1,63 @@
 import sys
 import time
 import json
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Hashmaps, located in json files
 
-with open("data.json", "r") as data:
+with open(os.path.join(BASE_DIR, "data.json"), "r") as data:
     data = json.load(data)
 
     OPCODES = data["opcodes"]
     COLORS = data["terminal_colors"]
-    # REG = data["registers"]
+    ARG = data["argument_n"]
 
 REG = {}
 register_count = 0
+r, g, b, y, reset = (
+    COLORS["red"],
+    COLORS["green"],
+    COLORS["blue"],
+    COLORS["yellow"],
+    COLORS["reset"],
+)
 
 
-def print_execution_time(exec_time):
+def print_execution_time(exec_time, mode):
     exec_time_ms = exec_time * 1000
-    g, b, y, r = (
-        COLORS["green"],
-        COLORS["blue"],
-        COLORS["yellow"],
-        COLORS["reset"],
-    )
-    print(f"{g}Execution state: {b}finished{r}, {y}{exec_time_ms:.2f}ms{r}")
+    
+    if mode == "halt":
+        print(f"{g}Execution state: {b}finished{reset}, {y}{exec_time_ms:.2f}ms{reset}")
+    elif mode == "kill":
+        print(f"{g}Execution state: {r}CANCELLED{reset}, {y}{exec_time_ms:.2f}ms{reset}")
 
+
+def error(message, pc):
+    print(f"{r}ERROR: {message}.{reset}")
+    pc += 1 #make it actual line rather than the index line
+    print(f"{y}line: {pc} ({filename}){reset}")
+    
+def generate_bytcode():
+    if not debug_mode:
+        return
+    
+    bytename = filename.rsplit('.', 1)[0] + ".acb"
+    
+    with open(bytename, 'w') as bytefile:
+        json.dump(bytecode, bytefile)
+        
+    print(f"{y}Debug: Bytecode saved to {bytename}{reset}")
 
 bytecode = []
-
-start_time = time.time()
 
 if len(sys.argv) < 2:
     print("Usage: python3 exa.py <file.ac>")
     sys.exit(1)
 
 filename = sys.argv[1]
+debug_mode = "--debug" in sys.argv
 
 if not filename.endswith(".ac"):
     print("Error: File must be a .ac file")
@@ -75,6 +98,12 @@ with open(filename, "r") as f:
             # Get instructions
             parts = before_quote.split()
             instruction = parts[0].lower()
+            
+            # unknown instruction
+            if instruction not in OPCODES:
+                error("unknown instruction", instruction_index)
+                sys.exit(1)
+            
             instruction_bytes.append(OPCODES[instruction])
 
             # Add any args before the string
@@ -107,6 +136,18 @@ with open(filename, "r") as f:
             # Normal instruction (no string)
             parts = line.split()
             instruction = parts[0].lower()
+            args = parts[1:]
+            
+            expected = ARG.get(instruction, None)
+            if expected is not None and len(args) != expected:
+                print(f"{r}Error: '{instruction}' expects {expected} arguments, got {len(args)}{reset}")
+                sys.exit(1)
+            
+            # unknown instruction
+            if instruction not in OPCODES:
+                error("unknown instruction", instruction_index)
+                sys.exit(1)
+            
             instruction_bytes.append(OPCODES[instruction])
 
             for i in range(1, len(parts)):
@@ -131,15 +172,15 @@ with open(filename, "r") as f:
                     instruction_bytes.append(REG[arg])
                 else:  # Then its a number
                     instruction_bytes.append(int(arg))
-
         bytecode.append(instruction_bytes)
-
+        
+generate_bytcode()
 
 # After assembler builds REG dict:
 register = [0] * register_count  # Create enough registers
 
 pc = 0  # program counter
-
+start_time = time.time()
 while pc < len(bytecode):
 
     instruction = bytecode[pc]
@@ -170,6 +211,11 @@ while pc < len(bytecode):
         case 5:  # div
             reg_src1 = instruction[1]
             reg_src2 = instruction[2]
+            
+            if register[reg_src2] == 0:
+                error("You cannot divide by zero", pc)
+                break
+            
             reg_dest = instruction[3]
             register[reg_dest] = register[reg_src1] // register[reg_src2]
             
@@ -191,6 +237,11 @@ while pc < len(bytecode):
         case 9: #divi
             reg_src = instruction[1]
             value = instruction[2]
+            
+            if value == 0:
+                error("You cannot divide by 0", pc)
+                break
+            
             reg_dest = instruction[3]
             register[reg_dest] = register[reg_src] // value
         
@@ -203,10 +254,12 @@ while pc < len(bytecode):
         case 10:  # print
             reg = instruction[1]
 
-            if isinstance(reg, str):
-                print(reg)
-            else:
-                print(register[reg])
+            for item in instruction[1:]:
+                if isinstance(item, str):
+                    print(item, end=" ")
+                else:
+                    print(register[item], end=" ")
+            print()
                 
                 
         case 404:  # jump
@@ -221,12 +274,16 @@ while pc < len(bytecode):
                     pc = instruction[1]
                     continue
             else:
-                if reg > 0:
+                if reg != 0:
                     pc = instruction[1]
                     continue
         case 255:
             end_time = time.time()
-            print_execution_time(end_time - start_time)
+            print_execution_time(end_time - start_time, "halt")
+            break
+        case 256:
+            end_time = time.time()
+            print_execution_time(end_time - start_time, "kill")
             break
 
     pc += 1
