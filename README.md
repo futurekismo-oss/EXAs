@@ -28,7 +28,7 @@ Here a list of them and what they do:
 
 - **load**: load a value or a register into a newly definied register
 
-> **Usage**: `load <value / register> <register>`
+>> **Usage**: `load <value / register> <register>`
 
 
 - **copy**: copy a value from a register and paste into another already defined register
@@ -41,6 +41,12 @@ Here a list of them and what they do:
 
 > **Usage**: `print <string / register>`
 
+
+- **Input**: collect input from the user and store in a register. 
+             mode 1, converts the input to a string.
+             mode 2, conver to input to int, if it fails convert to string
+
+> **Usage**: `input <register> <text> <mode>`
 
 _______________________________
 
@@ -123,7 +129,6 @@ and if you wanna see the bytecode of your program:
 
 
 
-_______________________________
 _______________________________
 
 ###### 2026, Futurekismo

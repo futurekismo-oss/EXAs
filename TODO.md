@@ -1,7 +1,7 @@
 # EXA TODO
 
 ## Phase 1: Core Interactivity (PRIORITY)
-- [ ] **input instruction** - `input <register> <mode>`
+- [x] **input instruction** - `input <register> <mode>`
   - Mode 0: try convert to int, fallback to string
   - Mode 1: force store as string
   - Update `data.json` with opcode and argument count

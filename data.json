@@ -18,7 +18,8 @@
         "jumpz": 406,
 
         "halt": 255,
-        "kill": 256
+        "kill": 256,
+        "input": 500
     },
     "terminal_colors": {
         "green": "\u001b[92m",
@@ -36,6 +37,7 @@
         "jump": 1,
         "jumpz": 3,
         "halt": 0,
-        "kill": 0
+        "kill": 0,
+        "input": 3
     }
 }

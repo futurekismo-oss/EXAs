@@ -176,6 +176,14 @@ with open(filename, "r") as f:
         
 generate_bytcode()
 
+def check_number(number, pc):
+    if isinstance(number, (int, float)):
+        error("You can only perform arithemic operation on integers", pc)
+    else:
+        return number
+
+
+
 # After assembler builds REG dict:
 register = [0] * register_count  # Create enough registers
 
@@ -197,17 +205,17 @@ while pc < len(bytecode):
             reg_src1 = instruction[1]
             reg_src2 = instruction[2]
             reg_dest = instruction[3]
-            register[reg_dest] = register[reg_src1] + register[reg_src2]
+            register[reg_dest] = check_number(register[reg_src1], pc) + check_number(register[reg_src2], pc)
         case 3:  # sub
             reg_src1 = instruction[1]
             reg_src2 = instruction[2]
             reg_dest = instruction[3]
-            register[reg_dest] = register[reg_src1] - register[reg_src2]
+            register[reg_dest] = check_number(register[reg_src1], pc) - check_number(register[reg_src2], pc)
         case 4:  # muli
             reg_src1 = instruction[1]
             reg_src2 = instruction[2]
             reg_dest = instruction[3]
-            register[reg_dest] = register[reg_src1] * register[reg_src2]
+            register[reg_dest] = check_number(register[reg_src1], pc) * check_number(register[reg_src2], pc)
         case 5:  # div
             reg_src1 = instruction[1]
             reg_src2 = instruction[2]
@@ -217,23 +225,23 @@ while pc < len(bytecode):
                 break
             
             reg_dest = instruction[3]
-            register[reg_dest] = register[reg_src1] // register[reg_src2]
+            register[reg_dest] = check_number(register[reg_src1], pc) // check_number(register[reg_src2], pc)
             
         case 6: #addi
             reg_src = instruction[1]
             value = instruction[2]
             reg_dest = instruction[3]
-            register[reg_dest] = register[reg_src] + value
+            register[reg_dest] = check_number(register[reg_src], pc) + check_number(value, pc)
         case 7: #subi
             reg_src = instruction[1]
             value = instruction[2]
             reg_dest = instruction[3]
-            register[reg_dest] = register[reg_src] - value
+            register[reg_dest] = check_number(register[reg_src], pc) - check_number(value, pc)
         case 8: #mulii
             reg_src = instruction[1]
             value = instruction[2]
             reg_dest = instruction[3]
-            register[reg_dest] = register[reg_src] * value
+            register[reg_dest] = check_number(register[reg_src], pc) * check_number(value, pc)
         case 9: #divi
             reg_src = instruction[1]
             value = instruction[2]
@@ -243,7 +251,7 @@ while pc < len(bytecode):
                 break
             
             reg_dest = instruction[3]
-            register[reg_dest] = register[reg_src] // value
+            register[reg_dest] = check_number(register[reg_src], pc) // check_number(value, pc)
         
         case 11: #copy
             reg_src = instruction[1]
@@ -260,8 +268,23 @@ while pc < len(bytecode):
                 else:
                     print(register[item], end=" ")
             print()
-                
-                
+
+        case 500: #input
+            reg = instruction[1]
+            mode = instruction[3]
+            text = instruction[2]
+ 
+            user_input = input(text)
+
+            if mode == 1:
+                #Store as string
+                register[reg] = user_input
+            else:
+                #try to store as a int, fallback to string
+                try:
+                    register[reg] = int(user_input)
+                except ValueError:
+                    register[reg] = user_input
         case 404:  # jump
             pc = instruction[1]
             continue
