@@ -38,6 +38,7 @@ def error(message, pc):
     print(f"{r}ERROR: {message}.{reset}")
     pc += 1 #make it actual line rather than the index line
     print(f"{y}line: {pc} ({filename}){reset}")
+    sys.ext(1)
     
 def generate_bytcode():
     if not debug_mode:
@@ -178,10 +179,10 @@ with open(filename, "r") as f:
 generate_bytcode()
 
 def check_number(number, pc):
-    if isinstance(number, (int, float)):
+    if not isinstance(number, int):
         error("You can only perform arithemic operation on integers", pc)
-    else:
-        return number
+        
+    return number
 
 
 
@@ -223,7 +224,6 @@ while pc < len(bytecode):
             
             if register[reg_src2] == 0:
                 error("You cannot divide by zero", pc)
-                break
             
             reg_dest = instruction[3]
             register[reg_dest] = check_number(register[reg_src1], pc) // check_number(register[reg_src2], pc)
@@ -249,7 +249,6 @@ while pc < len(bytecode):
             
             if value == 0:
                 error("You cannot divide by 0", pc)
-                break
             
             reg_dest = instruction[3]
             register[reg_dest] = check_number(register[reg_src], pc) // check_number(value, pc)
