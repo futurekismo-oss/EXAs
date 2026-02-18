@@ -92,8 +92,9 @@ with open(filename, "r") as f:
         instruction_bytes = []
         if '"' in line:
             # split the string
-            before_quote = line.split('"')[0].strip()
-            string_content = line.split('"')[1]
+            quote = line.split('"')
+            before_quote = quote[0].strip()
+            string_content = quote[1]
 
             # Get instructions
             parts = before_quote.split()
