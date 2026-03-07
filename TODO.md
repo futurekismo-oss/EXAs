@@ -35,9 +35,9 @@
 - [ ] **fappend** - `fappend <filename_reg> <content_reg>` (append to file)
 
 ## Phase 5: String Operations
-- [ ] **concat** - `concat <reg1> <reg2> <result_reg>` (concatenate two strings)
+- [x] **concat** - `concat <reg1> <reg2> <result_reg>` (concatenate two strings)
 - [ ] **strlen** - `strlen <reg> <result_reg>` (get string length)
-- [ ] **substr** - `substr <reg> <start> <length> <result_reg>` (get substring)
+- [-] **substr** - `substr <reg> <start> <length> <result_reg>` (get substring)
 
 ## Phase 6: Advanced Features (Future)
 - [ ] **call/ret** - Function calls with return addresses
@@ -47,7 +47,7 @@
 - [ ] **malloc/free** - Dynamic memory (if moving away from auto-registers)
 
 ## Infrastructure Improvements
-- [ ] **Variable argument system** - Only implement if 4+ instructions need it
+- [-] **Variable argument system** - Only implement if 4+ instructions need it
   - Add `variable_args` section to `data.json`
   - Format: `"instruction": [min_args, max_args]`
   - Update validation logic to check this first
@@ -59,7 +59,7 @@
 - [ ] **REPL mode** - Interactive EXA shell for quick testing
 
 ## Testing Milestones
-- [ ] **Milestone 1**: Write program that asks for name, prints greeting
+- [x] **Milestone 1**: Write program that asks for name, prints greeting
 - [ ] **Milestone 2**: Write program that reads file, processes it, writes output
 - [ ] **Milestone 3**: Write interactive calculator with string/number handling
 - [ ] **Milestone 4**: Write text adventure game (tests all features)

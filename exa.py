@@ -100,12 +100,12 @@ with open(filename, "r") as f:
             # Get instructions
             parts = before_quote.split()
             instruction = parts[0].lower()
-            
+
             # unknown instruction
             if instruction not in OPCODES:
                 error("unknown instruction", instruction_index)
                 sys.exit(1)
-            
+
             instruction_bytes.append(OPCODES[instruction])
 
             # Add any args before the string
@@ -139,17 +139,17 @@ with open(filename, "r") as f:
             parts = line.split()
             instruction = parts[0].lower()
             args = parts[1:]
-            
+                
             expected = ARG.get(instruction, None)
             if expected is not None and len(args) != expected:
                 print(f"{r}Error: '{instruction}' expects {expected} arguments, got {len(args)}{reset}")
                 sys.exit(1)
-            
+                
             # unknown instruction
             if instruction not in OPCODES:
                 error("unknown instruction", instruction_index)
                 sys.exit(1)
-            
+                
             instruction_bytes.append(OPCODES[instruction])
 
             for i in range(1, len(parts)):
@@ -160,7 +160,7 @@ with open(filename, "r") as f:
                     instruction_bytes.append(LABELS[arg])
 
                 # Is it a register?
-                                
+                                    
                 elif arg.isalpha():
                     # If this instruction expects a label but didn't find one,
                     # treat as register ONLY if it's not used in a jump.
@@ -198,10 +198,14 @@ while pc < len(bytecode):
 
     match opcode:
         case 1:
-            value = instruction[1]
-            reg = instruction[2]
+            value = instruction[2]
+            reg = instruction[1]
             register[reg] = value
-            
+        case 20: # string load
+            reg = instruction[1]
+            value = instruction[2]
+
+            register[reg] = value
             
         case 2:  # add
             reg_src1 = instruction[1]
@@ -271,8 +275,8 @@ while pc < len(bytecode):
 
         case 500: #input
             reg = instruction[1]
-            mode = instruction[3]
-            text = instruction[2]
+            mode = instruction[2]
+            text = instruction[3]
  
             user_input = input(text)
 
@@ -285,10 +289,17 @@ while pc < len(bytecode):
                     register[reg] = int(user_input)
                 except ValueError:
                     register[reg] = user_input
+
+        case 501: # concat
+            reg_src1 = instruction[1]
+            reg_src2 = instruction[2]
+            reg_dest = instruction[3]
+
+            register[reg_dest] = str(register[reg_src1] + register[reg_src2])
         case 404:  # jump
             pc = instruction[1]
             continue
-        case 406:  # jumpz
+        case 406:  # jumpr
             reg = register[instruction[2]]
             mode = instruction[3]
             

@@ -28,7 +28,11 @@ Here a list of them and what they do:
 
 - **load**: load a value or a register into a newly definied register
 
->> **Usage**: `load <value / register> <register>`
+>> **Usage**: `load <register> <value>`
+
+- **sload**: load a string into a newly defined register
+
+>> **Usage**: `sload <register> <value>`
 
 
 - **copy**: copy a value from a register and paste into another already defined register
