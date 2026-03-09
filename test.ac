@@ -1,8 +1,0 @@
-sload greeting "Hello, "
-sload msg "Hello, "
-
-input name 0 "Name: "  
-
-concat greeting name msg
-
-print msg
