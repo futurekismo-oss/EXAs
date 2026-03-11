@@ -12,3 +12,15 @@
 
 </div>
 
+
+EXA is a basic-like programming language
+
+```
+print "hello world"
+```
+Variables in EXA are called *registers* and the keywords are called *opcodes*
+
+You can read about how to code in EXA in the [Documentation](https://github.com/futurekismo-oss/EXAs/blob/main/DOCUMENTATION.md)
+
+Have fun!
+
