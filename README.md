@@ -18,10 +18,10 @@ EXA is a basic-like programming language
 ```
 print "hello world"
 ```
-you can run EXA using:
+You can run EXA using:
 
 ``` bash
-python3 exa.py filename.ac 
+$ python3 exa.py filename.ac 
 ```
 
 Variables in EXA are called *registers* and the keywords are called *opcodes*
