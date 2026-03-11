@@ -20,7 +20,7 @@ print "hello world"
 ```
 you can run EXA using:
 
-```
+``` bash
 python3 exa.py filename.ac 
 ```
 
