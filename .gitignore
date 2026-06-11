@@ -1,0 +1,23 @@
+# Bytecode output
+*.acb
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Personal notes
+CHANGE_LOG.md
+Learning resources.txt

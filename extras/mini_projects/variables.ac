@@ -1,0 +1,15 @@
+load num 12345
+load digit 0
+load temp 0
+
+print "Number:"
+print num
+
+print "Digits:"
+print digit
+print digit
+print digit
+print digit
+print digit
+
+halt

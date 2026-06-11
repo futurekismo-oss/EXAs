@@ -1,0 +1,15 @@
+sload prompt1 "Enter first number: "
+sload prompt2 "Enter second number: "
+sload result_msg "Result: "
+
+load x 0
+load y 0
+load z 0
+
+input x prompt1 2
+input y prompt2 2
+
+add x y z
+print result_msg
+print z
+halt

@@ -37,13 +37,17 @@ def exaVm(bytecode: list, register: list) -> str:
             reg_src1 = valNum(instruction[1], pc)
             value = valNum(instruction[2], pc)
             reg_dest = instruction[3]
-            register[reg_dest] = REG_OPS[opcode](register[reg_src1], value)
+            register[reg_dest] = IMM_OPS[opcode](register[reg_src1], value)
 
         match opcode:
             case 1:
                 reg = instruction[1]
                 value = instruction[2]
                 register[reg] = value
+            case 502:  # sload
+                reg = instruction[1]
+                string = instruction[2]
+                register[reg] = string
             case 11:  # copy
                 reg_src = instruction[1]
                 reg_dest = instruction[2]
@@ -77,7 +81,7 @@ def exaVm(bytecode: list, register: list) -> str:
                 reg_src2 = instruction[2]
                 reg_dest = instruction[3]
 
-                register[reg_dest] = str(register[reg_src1] + register[reg_src2])
+                register[reg_dest] = str(register[reg_src1]) + str(register[reg_src2])
             case 404:  # jump
                 pc = instruction[1]
                 continue
@@ -102,6 +106,8 @@ def exaVm(bytecode: list, register: list) -> str:
                 end_time = time.time()
                 execTime(end_time - start_time, "kill")
                 break
+            case 503:
+                output += "\n"
 
         pc += 1
     return output

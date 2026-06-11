@@ -1,0 +1,15 @@
+load x 10
+load y 5
+add x y z
+sub x y w
+muli x y a
+div x y b
+print "x + y ="
+print z
+print "x - y ="
+print w
+print "x * y ="
+print a
+print "x / y ="
+print b
+halt

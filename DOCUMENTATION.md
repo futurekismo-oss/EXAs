@@ -1,138 +1,258 @@
-# ***EXA***
+# EXA
 
-my programming language comes with compiler and assembler
-*Basic or Assembly-like.*
-*Built on ***Python3***
+A lightweight, assembly-like programming language with its own compiler and virtual machine.
 
-The file extension is ***`.ac`***
+- **Basic or Assembly-like syntax**
+- **Built on Python3**
+- **File extension:** `.ac`
 
+---
 
-_______________________________
+## Quick Start
 
-# **Documentation:** 
+```bash
+# Run a program
+python3 src/exa.py program.ac
 
+# Run with bytecode debug output
+python3 src/exa.py program.ac --debug
+```
 
-> ## ***TERMS***
+---
 
->> #### OPCODES are basically inbuilt functions in ***EXA***
+## Documentation
 
+### TERMS
 
->> #### REGISTER are basically variables e.g *x, box* e.tc
+**OPCODES** are built-in instructions/functions in EXA.
 
+**REGISTERS** are variables that hold values (e.g., `x`, `box`).
 
->> #### VALUE are base 10 number
+**VALUES** are base-10 numbers.
 
+**LABELS** mark locations for jumps (e.g., `loop:`, `start:`).
 
+---
 
-Here a list of them and what they do:
+### OPCODES
 
-- **load**: load a value or a register into a newly definied register
+#### Data Operations
 
->> **Usage**: `load <register> <value>`
+- **`load`**: Load a value into a register
+  ```
+  load <register> <value>
+  load x 42        << x = 42
+  ```
 
-- **sload**: load a string into a newly defined register
+- **`sload`**: Load a string into a register
+  ```
+  sload <register> "<string>"
+  sload name "Alice"  << name = "Alice"
+  ```
 
->> **Usage**: `sload <register> <value>`
+- **`copy`**: Copy a register's value to another register
+  ```
+  copy <src_register> <dest_register>
+  copy x y           << y = x
+  ```
 
+- **`concat`**: Concatenate two registers and store in another
+  ```
+  concat <register1> <register2> <dest_register>
+  concat first last fullname  << fullname = first + last
+  ```
 
-- **copy**: copy a value from a register and paste into another already defined register
+#### Input/Output
 
-> **Usage**: `copy <register> <register>`
+- **`print`**: Print a string or register value
+  ```
+  print <string / register>
+  print "Hello"      << prints Hello
+  print x            << prints value of x
+  ```
 
+- **`input`**: Get user input (mode 1 = string, mode 2 = int or string fallback)
+  ```
+  input <register> <mode> <prompt>
+  input name "Name: " 1
+  input age "Age: " 2
 
-- **print**: print a string to the screen or print a value from a register_src 
-             *if you try `print 10`, it wont print 10 but rather the register with the index 10*
 
-> **Usage**: `print <string / register>`
+- **`nl`**: Use nl to print a newline
+  ```
+  nl << prints a newline thats its
+  ```
 
+#### Arithmetic (Register-based)
 
-- **Input**: collect input from the user and store in a register. 
-             mode 1, converts the input to a string.
-             mode 2, conver to input to int, if it fails convert to string
+Requires all three registers to be pre-defined with `load`.
 
-> **Usage**: `input <register> <text> <mode>`
+- **`add`**: Add two registers
+  ```
+  add <register1> <register2> <dest_register>
+  add x y z          << z = x + y
+  ```
 
-_______________________________
+- **`sub`**: Subtract two registers
+  ```
+  sub <register1> <register2> <dest_register>
+  sub x y z          << z = x - y
+  ```
 
-### ***ARITHMETIC FUNCTIONS***
-
-***Note***: Register must be defined with load before doing arithmetic on them
-            *including the register that holds the result*
-
-
-- **add/sub/muli/div**: add/sub/muli/div two registers together and store the result in another register
-
-> **Usage**: `add / sub / muli / div <register_src1> <register_src2> <register_dest>`
->> **Example**: `add x y x` **<< x + y = z**
-
-
-***Note:*** The previous architmetic could only work on value in register, these ones works on values in register to values in digits
-
-
-- **addi/subi/mulii/divi**: add/sub/muli/div a value from a register and a given value and store the result in another register
-
-> **Usage**: `addi / subi / mulii / divi <register_src1> <value> <register_dest>`
->> **Example**: `add x 1 y` **<< x + 1 = y**
-
-
-_______________________________
-
-### ***CONDITIONALS***
-
-***Note***: You can mark a **location** in your code by putting ':' after a word e.g `loop:` or `inf:`
-
-
-- **jump**: jump to a marked location in your code when reached.
-            ***ps**goes on forever, be careful*
-
-> **Usage**: `jump <location>`
->> **Example**:
->> ```
->> mark:
->> jump mark
->> ```
-
-- **jumpz**: has 2 modes, 
-    1. **first mode (1)**, jump to a marked locaton if the given register is equal to zero
-    2. **second mode (0)**, jump to a marked location if the given register is not zero
-
-> **Usage**: `jumpz <location> <register> <mode>`
->> **Example**: `jump mark z 0` **<< jump to mark if z is equal to zero** 
-
-_______________________________
-
-### ***MISCELLANEOUS***
-
-- **halt**: ends the program, and return the execution state as successful and prints how long the program ran.
-
-> **Usage**: `halt`
-
-
-- **kill**: same as halt but return the execution state as failed
-
-> **Usage**: `kill`
-
-
-- **<<**: you can write comments like this
-
-> **Usage**: `print x << hey, i'm a comment`
->>           `<< hey, i'm a standalone comment`
-
-
-_______________________________
-
-# **HOW TO RUN**
-
-You can run EXA by *(if ***exa.py*** is located in home dir)*:
-
-> `$ python3 exa.py <your_program>.ac`
-
-and if you wanna see the bytecode of your program:
-
-> `$ python3 exa.py <your_program>.ac --debug`
-
-
-
-_______________________________
+- **`mul`**: Multiply two registers
+  ```
+  mul <register1> <register2> <dest_register>
+  mul x y z          << z = x * y
+  ```
+
+- **`div`**: Divide two registers (integer division)
+  ```
+  div <register1> <register2> <dest_register>
+  div x y z          << z = x / y (floor)
+  ```
+
+#### Arithmetic (Immediate)
+
+Performs arithmetic with a register and a constant value.
+
+- **`addi`**: Add immediate value
+  ```
+  addi <register> <value> <dest_register>
+  addi x 1 z         << z = x + 1
+  ```
+
+- **`subi`**: Subtract immediate value
+  ```
+  subi <register> <value> <dest_register>
+  subi x 5 z         << z = x - 5
+  ```
+
+- **`mulii`**: Multiply by immediate value
+  ```
+  mulii <register> <value> <dest_register>
+  mulii x 2 z        << z = x * 2
+  ```
+
+- **`divi`**: Divide by immediate value
+  ```
+  divi <register> <value> <dest_register>
+  divi x 2 z         << z = x / 2 (floor)
+  ```
+
+#### Control Flow
+
+- **`jump`**: Unconditional jump to a label
+  ```
+  jump <label>
+  jump loop          << go to 'loop:'
+  ```
+
+- **`jumpz`**: Conditional jump based on register value
+  ```
+  jumpz <label> <register> <mode>
+  jumpz end counter 0    << jump if counter != 0 (mode 0)
+  jumpz end counter 1     << jump if counter == 0 (mode 1)
+  ```
+
+- **`jumpr`**: Reverse conditional jump (opposite logic)
+  ```
+  jumpr <label> <register> <mode>
+  jumpr skip value 0      << jump if value == 0 (mode 0)
+  jumpr skip value 1      << jump if value != 0 (mode 1)
+  ```
+
+#### Execution Control
+
+- **`halt`**: End program successfully, print execution time
+  ```
+  halt
+  ```
+
+- **`kill`**: End program with failure status, print execution time
+  ```
+  kill
+  ```
+
+---
+
+### COMMENTS
+
+Use `<<` to add comments:
+
+```
+print x << this is a comment
+<< this is a standalone comment
+```
+
+---
+
+### EXAMPLES
+
+#### Hello World
+```
+print "hello world"
+```
+
+#### Simple Calculator
+```
+load x 10
+load y 5
+add x y z
+print z           << prints 15
+halt
+```
+
+#### Loop
+```
+load counter 3
+load one 1
+loop:
+print counter
+subi counter 1 counter
+jumpz end counter 0
+jump loop
+end:
+print "done"
+halt
+```
+
+#### String Concatenation
+```
+sload first "Hello "
+sload second "World"
+concat first second message
+print message        << prints "Hello World"
+halt
+```
+
+---
+
+### HOW TO RUN
+
+```bash
+python3 src/exa.py <your_program>.ac
+python3 src/exa.py <your_program>.ac --debug  << shows bytecode
+```
+
+---
+
+## Project Structure
+
+```
+EXAs/
+├── src/
+│   ├── exa.py       << Entry point
+│   ├── compiler.py  << Source -> bytecode
+│   ├── vm.py        << Bytecode executor
+│   ├── settings.py  << Configuration
+│   └── utils.py     << Helpers
+├── data/
+│   └── data.json    << Opcodes & colors
+├── extras/
+│   └── mini_projects/  << Example programs
+└── DOCUMENTATION.md
+```
+
+---
 
 ###### 2026, Futurekismo

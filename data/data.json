@@ -1,26 +1,24 @@
 {
   "opcodes": {
     "load": 1,
-
     "add": 2,
     "sub": 3,
     "muli": 4,
     "div": 5,
-
     "addi": 6,
     "subi": 7,
     "mulii": 8,
     "divi": 9,
-
     "copy": 11,
     "print": 10,
     "jump": 404,
     "jumpz": 406,
-
     "halt": 255,
     "kill": 256,
     "input": 500,
-    "concat": 501
+    "concat": 501,
+    "sload": 502,
+    "nl": 503
   },
   "terminal_colors": {
     "green": "\u001b[92m",
@@ -31,6 +29,7 @@
   },
   "argument_n": {
     "load": 2,
+    "sload": 2,
     "add": 3,
     "sub": 3,
     "muli": 3,
@@ -46,6 +45,7 @@
     "halt": 0,
     "kill": 0,
     "input": 3,
-    "concat": 3
+    "concat": 3,
+    "nl": 0
   }
 }

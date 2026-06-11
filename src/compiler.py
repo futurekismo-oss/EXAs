@@ -44,6 +44,27 @@ class Compiler:
 
         instruction_bytes.append(OPCODES[instruction])
 
+        # Handle jump instructions specially
+        if instruction == "jump":
+            # First arg is always a label (may be forward reference)
+            arg = parts[1].lower()
+            instruction_bytes.append(self.LABELS.get(arg, arg))
+            return instruction_bytes
+
+        if instruction == "jumpz":
+            # Format: jumpz <label> <register> <mode>
+            label_arg = parts[1].lower()
+            instruction_bytes.append(self.LABELS.get(label_arg, label_arg))
+            # Register arg
+            reg_arg = parts[2].lower()
+            if reg_arg not in self.REG:
+                self.REG[reg_arg] = self.register_count
+                self.register_count += 1
+            instruction_bytes.append(self.REG[reg_arg])
+            # Mode arg (number)
+            instruction_bytes.append(int(parts[3]))
+            return instruction_bytes
+
         # Add any args before the string
         for i in range(1, len(parts)):
             arg = parts[i].lower()
@@ -54,12 +75,6 @@ class Compiler:
 
             # Is it a register?
             elif arg.isalpha():
-                # If this instruction expects a label but didn't find one,
-                # treat as register ONLY if it's not used in a jump.
-                if instruction in ["jump", "jumpz"] and arg not in self.REG:
-                    print(f"Error: Undefined label '{arg}'")
-                    sys.exit(1)
-
                 if arg not in self.REG:
                     self.REG[arg] = self.register_count
                     self.register_count += 1
@@ -105,11 +120,24 @@ class Compiler:
 
             self.bytecode.append(instruction_bytes)
 
+    def resolve_labels(self):
+        for instruction in self.bytecode:
+            opcode = instruction[0]
+            if opcode == 404:  # jump
+                target = instruction[1]
+                if isinstance(target, str):
+                    instruction[1] = self.LABELS.get(target, target)
+            elif opcode == 406:  # jumpz
+                target = instruction[1]
+                if isinstance(target, str):
+                    instruction[1] = self.LABELS.get(target, target)
+
     def compile(self, source: str, debug: bool = False) -> list:
         self.source = source
         self.debug = debug
         lines = self.preprocess()
         self.parse(lines)
+        self.resolve_labels()
         if self.debug:
             genBytecode(source, self.bytecode)
         return self.bytecode

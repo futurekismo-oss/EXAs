@@ -1,0 +1,3 @@
+sload name ""
+input name 1 "Name: "
+print name

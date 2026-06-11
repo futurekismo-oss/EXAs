@@ -1,0 +1,9 @@
+load counter 5
+loop:
+print counter
+subi counter 1 counter
+jumpz done counter 1
+jump loop
+done:
+print "finished"
+halt
